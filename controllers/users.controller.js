@@ -31,7 +31,11 @@ exports.login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: 'Mot de passe incorrect.' });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, 'secret_key', { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
     res.status(200).json({ token, pseudo: user.pseudo });
   } catch (error) {
     console.error('Erreur login:', error.message);
