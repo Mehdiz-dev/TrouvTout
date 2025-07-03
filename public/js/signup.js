@@ -5,22 +5,16 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
   const pseudo = document.getElementById('pseudo').value;
 
-  const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+  try {
+    const res = await fetch('/api/users/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, pseudo })
+    });
 
-  if (signUpError) {
-    document.getElementById('response').innerText = signUpError.message;
-    return;
-  }
-
-  const user_id = data.user.id;
-
-  const { error: insertError } = await supabase
-    .from('users')
-    .insert({ id: user_id, pseudo });
-
-  if (insertError) {
-    document.getElementById('response').innerText = insertError.message;
-  } else {
-    document.getElementById('response').innerText = "Inscription réussie !";
+    const data = await res.json();
+    document.getElementById('response').innerText = data.message;
+  } catch (err) {
+    document.getElementById('response').innerText = 'Erreur côté client.';
   }
 });
