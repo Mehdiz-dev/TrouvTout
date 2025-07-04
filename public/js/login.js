@@ -9,7 +9,23 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     document.getElementById('response').innerText = error.message;
   } else {
     document.getElementById('response').innerText = "Connecté !";
-    localStorage.setItem('supabase_token', data.session.access_token);
-    console.log("Token :", data.session.access_token);
+    const access_token = data.session.access_token;
+    const user_id = data.user.id;
+
+    localStorage.setItem("access_token", access_token);
+    localStorage.setItem("user_id", user_id);
+
+    const profileRes = await fetch(`http://localhost:3000/api/users/${user_id}`, {
+      headers: {
+        Authorization: "Bearer " + access_token
+      }
+    });
+    const profile = await profileRes.json();
+
+    localStorage.setItem("user_pseudo", profile.pseudo || "Inconnu");
+    localStorage.setItem("user_localité", profile.localité || "");
+
+    console.log("Connecté :", profile.pseudo);
   }
+
 });

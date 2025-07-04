@@ -13,8 +13,11 @@ async function isAuthenticated(req, res, next) {
   if (error || !data.user) {
     return res.status(403).json({ message: "Utilisateur non authentifié." });
   }
+  console.log("Utilisateur connecté via token :", data.user.id);
+
 
   req.user = data.user;
+  req.token = token;
   next();
 }
 

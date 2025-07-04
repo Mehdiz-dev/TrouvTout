@@ -23,6 +23,11 @@ form.addEventListener("submit", async (e) => {
   const formData = new FormData(form);
   const annonce = Object.fromEntries(formData.entries());
 
+  annonce.prix = parseFloat(annonce.prix);
+  annonce.category_id = parseInt(annonce.category_id);
+
+  console.log("Annonce à envoyer :", annonce);
+
   const token = localStorage.getItem("access_token");
   if (!token) {
     return alert("Utilisateur non connecté.");

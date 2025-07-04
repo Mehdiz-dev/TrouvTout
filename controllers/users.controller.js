@@ -1,3 +1,13 @@
+const { createClient } = require("@supabase/supabase-js");
+
+function supabaseWithAuth(token) {
+  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY, {
+    global: {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  });
+}
+
 const supabase = require('../services/supabaseClient');
 const userModel = require('../models/users.model');
 
@@ -54,3 +64,30 @@ exports.signup = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur lors de l’inscription.' });
   }
 };
+
+exports.getProfileById = async (req, res) => {
+  const supabase = supabaseWithAuth(req.token);
+
+  try {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("pseudo, localité")
+      .eq("id", req.user.id)
+      .single();
+
+    if (error) {
+      console.error("Erreur Supabase getProfileById:", error.message);
+      return res.status(500).json({ message: "Erreur Supabase" });
+    }
+
+    if (!data) {
+      return res.status(404).json({ message: "Profil introuvable." });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Erreur serveur getProfileById:", err.message);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
