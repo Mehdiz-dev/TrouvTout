@@ -14,8 +14,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Routes API
 const annoncesRoutes = require("./routes/annonces.routes");
 const categoriesRoutes = require("./routes/categories.routes");
+const favorisRoutes = require("./routes/favoris.routes");
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/annonces", annoncesRoutes);
+app.use("/api/favoris", favorisRoutes);
 app.use('/api/users', require('./routes/users.routes'));
 
 //Serveur
